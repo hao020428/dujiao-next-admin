@@ -5,6 +5,7 @@ import { adminAPI } from '@/api/admin'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { formatDate } from '@/utils/format'
 import { Bot, ExternalLink, Wifi, WifiOff, RefreshCw } from 'lucide-vue-next'
 
 const { t } = useI18n()
@@ -28,6 +29,23 @@ const fetchRuntimeStatus = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const formatRuntimeDate = (value: unknown) => {
+  if (typeof value !== 'string' || !value) return '-'
+  return formatDate(value) || '-'
+}
+
+const formatWebhookStatus = (value: unknown) => {
+  if (typeof value !== 'string' || !value) return '-'
+  const normalized = value.trim().toLowerCase()
+  if (['active', 'enabled', 'connected', 'ok'].includes(normalized)) {
+    return t('telegramBot.status.webhookStatusActive')
+  }
+  if (['inactive', 'disabled', 'disconnected'].includes(normalized)) {
+    return t('telegramBot.status.webhookStatusInactive')
+  }
+  return value
 }
 
 onMounted(() => {
@@ -67,11 +85,11 @@ onMounted(() => {
           </div>
           <div>
             <p class="text-sm text-muted-foreground">{{ t('telegramBot.status.webhookStatus') }}</p>
-            <p class="text-sm font-medium">{{ runtimeStatus.webhook_status || '-' }}</p>
+            <p class="text-sm font-medium">{{ formatWebhookStatus(runtimeStatus.webhook_status) }}</p>
           </div>
           <div>
             <p class="text-sm text-muted-foreground">{{ t('telegramBot.status.lastSeenAt') }}</p>
-            <p class="text-sm font-medium">{{ runtimeStatus.last_seen_at || '-' }}</p>
+            <p class="text-sm font-medium">{{ formatRuntimeDate(runtimeStatus.last_seen_at) }}</p>
           </div>
           <div>
             <p class="text-sm text-muted-foreground">{{ t('telegramBot.status.configVersion') }}</p>

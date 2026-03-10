@@ -5,6 +5,7 @@ import { adminAPI } from '@/api/admin'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { formatDate } from '@/utils/format'
 import { Wifi, WifiOff, RefreshCw } from 'lucide-vue-next'
 
 const { t } = useI18n()
@@ -28,6 +29,23 @@ const fetchRuntimeStatus = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const formatRuntimeDate = (value: unknown) => {
+  if (typeof value !== 'string' || !value) return '-'
+  return formatDate(value) || '-'
+}
+
+const formatWebhookStatus = (value: unknown) => {
+  if (typeof value !== 'string' || !value) return '-'
+  const normalized = value.trim().toLowerCase()
+  if (['active', 'enabled', 'connected', 'ok'].includes(normalized)) {
+    return t('telegramBot.status.webhookStatusActive')
+  }
+  if (['inactive', 'disabled', 'disconnected'].includes(normalized)) {
+    return t('telegramBot.status.webhookStatusInactive')
+  }
+  return value
 }
 
 onMounted(() => {
@@ -78,7 +96,7 @@ onMounted(() => {
             </div>
             <div class="rounded-lg border p-4">
               <p class="text-sm text-muted-foreground mb-1">{{ t('telegramBot.status.webhookStatus') }}</p>
-              <p class="text-lg font-semibold">{{ runtimeStatus.webhook_status || '-' }}</p>
+              <p class="text-lg font-semibold">{{ formatWebhookStatus(runtimeStatus.webhook_status) }}</p>
             </div>
             <div class="rounded-lg border p-4">
               <p class="text-sm text-muted-foreground mb-1">{{ t('telegramBot.status.configVersion') }}</p>
@@ -86,11 +104,11 @@ onMounted(() => {
             </div>
             <div class="rounded-lg border p-4">
               <p class="text-sm text-muted-foreground mb-1">{{ t('telegramBot.status.lastSeenAt') }}</p>
-              <p class="text-lg font-semibold">{{ runtimeStatus.last_seen_at || '-' }}</p>
+              <p class="text-lg font-semibold">{{ formatRuntimeDate(runtimeStatus.last_seen_at) }}</p>
             </div>
             <div class="rounded-lg border p-4">
               <p class="text-sm text-muted-foreground mb-1">{{ t('telegramBot.status.lastConfigSyncAt') }}</p>
-              <p class="text-lg font-semibold">{{ runtimeStatus.last_config_sync_at || '-' }}</p>
+              <p class="text-lg font-semibold">{{ formatRuntimeDate(runtimeStatus.last_config_sync_at) }}</p>
             </div>
           </div>
         </div>

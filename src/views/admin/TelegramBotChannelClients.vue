@@ -217,7 +217,7 @@ onMounted(() => {
               <TableHead>{{ t('telegramBot.channelClients.name') }}</TableHead>
               <TableHead>{{ t('telegramBot.channelClients.channelKey') }}</TableHead>
               <TableHead>{{ t('telegramBot.channelClients.channelSecret') }}</TableHead>
-              <TableHead>Bot Token</TableHead>
+              <TableHead>{{ t('telegramBot.channelClients.botToken') }}</TableHead>
               <TableHead>{{ t('telegramBot.channelClients.callbackUrl') }}</TableHead>
               <TableHead>{{ t('telegramBot.channelClients.statusLabel') }}</TableHead>
               <TableHead>{{ t('telegramBot.channelClients.actions') }}</TableHead>
@@ -313,7 +313,7 @@ onMounted(() => {
             <Input v-model="createForm.name" :placeholder="t('telegramBot.channelClients.namePlaceholder')" />
           </div>
           <div class="space-y-2">
-            <Label>Bot Token</Label>
+            <Label>{{ t('telegramBot.channelClients.botToken') }}</Label>
             <Input v-model="createForm.bot_token" :placeholder="t('telegramBot.channelClients.botTokenPlaceholder')" />
             <p class="text-xs text-muted-foreground">{{ t('telegramBot.channelClients.botTokenHint') }}</p>
           </div>
@@ -350,7 +350,7 @@ onMounted(() => {
             <Input v-model="editForm.name" :placeholder="t('telegramBot.channelClients.namePlaceholder')" />
           </div>
           <div class="space-y-2">
-            <Label>Bot Token</Label>
+            <Label>{{ t('telegramBot.channelClients.botToken') }}</Label>
             <Input v-model="editForm.bot_token" :placeholder="t('telegramBot.channelClients.botTokenEditPlaceholder')" />
             <p class="text-xs text-muted-foreground">
               <template v-if="editingClient?.bot_token_set">
