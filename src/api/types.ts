@@ -142,6 +142,16 @@ export interface AdminOrder {
   user_email?: string
 }
 
+export interface AdminUserOAuthIdentity {
+  id: number
+  provider: string
+  provider_user_id: string
+  username?: string
+  avatar_url?: string
+  auth_at?: string
+  created_at: string
+}
+
 // --- CardSecret ---
 export interface AdminCardSecretBatch {
   id: number
@@ -370,6 +380,7 @@ export interface AdminUser {
   last_login_at?: string
   created_at: string
   updated_at: string
+  oauth_identities?: AdminUserOAuthIdentity[]
   [key: string]: unknown
 }
 
