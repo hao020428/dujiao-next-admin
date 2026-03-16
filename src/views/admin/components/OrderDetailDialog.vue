@@ -497,6 +497,12 @@ watch(
                   <div class="text-foreground font-mono mt-1">{{ formatMoney(selectedOrder.promotion_discount_amount, selectedOrder.currency) }}</div>
                 </CardContent>
               </Card>
+              <Card v-if="hasPositiveAmount(selectedOrder.member_discount_amount)" class="rounded-lg border-amber-200 bg-amber-50/50 shadow-none">
+                <CardContent class="p-3">
+                  <div class="text-xs text-amber-700">{{ t('admin.orders.detailMemberDiscount') }}</div>
+                  <div class="text-amber-700 font-mono mt-1">{{ formatMoney(selectedOrder.member_discount_amount, selectedOrder.currency) }}</div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
@@ -562,6 +568,9 @@ watch(
                     <div v-if="hasPositiveAmount(item.promotion_discount_amount)">
                       {{ t('orderDetail.promotionDiscountLabel') }}：{{ formatMoney(item.promotion_discount_amount, selectedOrder.currency) }}
                     </div>
+                    <div v-if="hasPositiveAmount(item.member_discount_amount)" class="text-amber-700">
+                      {{ t('orderDetail.memberDiscountLabel') }}：{{ formatMoney(item.member_discount_amount, selectedOrder.currency) }}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -624,6 +633,9 @@ watch(
                         </div>
                         <div v-if="hasPositiveAmount(item.promotion_discount_amount)">
                           {{ t('orderDetail.promotionDiscountLabel') }}：{{ formatMoney(item.promotion_discount_amount, selectedOrder.currency) }}
+                        </div>
+                        <div v-if="hasPositiveAmount(item.member_discount_amount)" class="text-amber-700">
+                          {{ t('orderDetail.memberDiscountLabel') }}：{{ formatMoney(item.member_discount_amount, selectedOrder.currency) }}
                         </div>
                       </div>
                     </div>

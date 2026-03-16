@@ -356,6 +356,7 @@ export const adminAPI = {
   batchUpsertMemberLevelPrices: (data: { prices: Partial<AdminMemberLevelPrice>[] }) => api.post<ApiResponse>('/admin/member-level-prices/batch', data),
   deleteMemberLevelPrice: (id: number) => api.delete<ApiResponse>(`/admin/member-level-prices/${id}`),
   setUserMemberLevel: (userId: number, memberLevelId: number) => api.put<ApiResponse>(`/admin/users/${userId}/member-level`, { member_level_id: memberLevelId }),
+  backfillMemberLevels: () => api.post<ApiResponse<{ affected: number }>>('/admin/member-levels/backfill'),
   createCardSecretBatch: (data: { product_id: number; sku_id?: number; name?: string; secrets: string[]; batch_no?: string; note?: string }) => api.post<ApiResponse<AdminCardSecretBatch>>('/admin/card-secrets/batch', data),
   importCardSecretCSV: (formData: FormData) =>
     api.post<ApiResponse>('/admin/card-secrets/import', formData, {

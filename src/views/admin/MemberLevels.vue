@@ -10,7 +10,7 @@ import { Dialog, DialogHeader, DialogScrollContent, DialogTitle } from '@/compon
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import TableSkeleton from '@/components/TableSkeleton.vue'
 import { formatDate, getLocalizedText } from '@/utils/format'
-import { notifyError } from '@/utils/notify'
+import { notifyError, notifySuccess } from '@/utils/notify'
 import { confirmAction } from '@/utils/confirm'
 
 const { t, locale } = useI18n()
@@ -157,6 +157,25 @@ const handleDelete = async (level: AdminMemberLevel) => {
   }
 }
 
+const backfilling = ref(false)
+const handleBackfill = async () => {
+  const confirmed = await confirmAction({
+    description: t('admin.memberLevels.backfillConfirm'),
+    confirmText: t('admin.common.confirm'),
+  })
+  if (!confirmed) return
+  backfilling.value = true
+  try {
+    const response = await adminAPI.backfillMemberLevels()
+    const affected = response.data.data?.affected ?? 0
+    notifySuccess(t('admin.memberLevels.backfillSuccess', { count: affected }))
+  } catch (err: any) {
+    notifyError(err.message || t('admin.memberLevels.backfillFailed'))
+  } finally {
+    backfilling.value = false
+  }
+}
+
 const getLocaleLabel = (loc: string) => {
   const labels: Record<string, string> = { 'zh-CN': '简体中文', 'zh-TW': '繁體中文', 'en-US': 'English' }
   return labels[loc] || loc
@@ -185,6 +204,9 @@ onMounted(() => {
     <div class="rounded-xl border border-border bg-card p-4 shadow-sm">
       <div class="flex items-center gap-3">
         <div class="flex-1" />
+        <Button size="sm" variant="outline" :disabled="backfilling" @click="handleBackfill">
+          {{ backfilling ? t('admin.memberLevels.backfilling') : t('admin.memberLevels.backfill') }}
+        </Button>
         <Button size="sm" @click="refresh">{{ t('admin.common.refresh') }}</Button>
       </div>
     </div>
