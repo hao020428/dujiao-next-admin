@@ -112,6 +112,7 @@ export interface AdminOrderItem {
   promotion_name?: string
   tags?: string[]
   manual_form_submission?: Record<string, unknown>
+  manual_form_schema_snapshot?: Record<string, unknown>
   coupon_discount_amount?: number
   promotion_discount_amount?: number
   member_discount_amount?: number

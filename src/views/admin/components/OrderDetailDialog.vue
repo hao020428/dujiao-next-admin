@@ -157,12 +157,22 @@ const formatManualValue = (value: unknown) => {
   return String(value)
 }
 
-const manualSubmissionRows = (submission: Record<string, unknown> | null | undefined) => {
+const manualSubmissionRows = (submission: Record<string, unknown> | null | undefined, schemaSnapshot?: Record<string, unknown> | null) => {
   if (!submission || typeof submission !== 'object') return []
+  const fields = Array.isArray(schemaSnapshot?.fields) ? (schemaSnapshot!.fields as Record<string, unknown>[]) : []
+  const labelMap = new Map<string, string>()
+  for (const field of fields) {
+    const fieldKey = String(field?.key || '').trim()
+    if (fieldKey) {
+      const label = getLocalizedText(field?.label as Record<string, string> | undefined)
+      if (label) labelMap.set(fieldKey, label)
+    }
+  }
   return Object.entries(submission)
     .filter(([key]) => String(key).trim() !== '')
     .map(([key, value]) => ({
       key: String(key),
+      label: labelMap.get(String(key)) || String(key),
       value: formatManualValue(value),
     }))
 }
@@ -587,11 +597,11 @@ watch(
                         {{ tag }}
                       </span>
                     </div>
-                    <div v-if="manualSubmissionRows(item.manual_form_submission).length" class="mt-3 rounded-lg border border-border bg-background p-3">
+                    <div v-if="manualSubmissionRows(item.manual_form_submission, item.manual_form_schema_snapshot).length" class="mt-3 rounded-lg border border-border bg-background p-3">
                       <div class="text-xs font-semibold text-muted-foreground mb-2">{{ t('admin.orders.manualSubmissionTitle') }}</div>
                       <div class="space-y-1 text-xs text-muted-foreground">
-                        <div v-for="row in manualSubmissionRows(item.manual_form_submission)" :key="`${item.id}-${row.key}`" class="break-words">
-                          <span class="text-foreground">{{ row.key }}</span>：<span class="break-all">{{ row.value }}</span>
+                        <div v-for="row in manualSubmissionRows(item.manual_form_submission, item.manual_form_schema_snapshot)" :key="`${item.id}-${row.key}`" class="break-words">
+                          <span class="text-foreground">{{ row.label }}</span>：<span class="break-all">{{ row.value }}</span>
                         </div>
                       </div>
                     </div>
@@ -662,11 +672,11 @@ watch(
                           </div>
                           <div class="mt-1 break-words text-xs text-muted-foreground">{{ t('admin.orders.itemSkuSpec') }}：{{ orderItemSkuSpecText(item) }}</div>
                         </div>
-                        <div v-if="manualSubmissionRows(item.manual_form_submission).length" class="mt-3 rounded-lg border border-border bg-muted/20 p-3">
+                        <div v-if="manualSubmissionRows(item.manual_form_submission, item.manual_form_schema_snapshot).length" class="mt-3 rounded-lg border border-border bg-muted/20 p-3">
                           <div class="text-xs font-semibold text-muted-foreground mb-2">{{ t('admin.orders.manualSubmissionTitle') }}</div>
                           <div class="space-y-1 text-xs text-muted-foreground">
-                            <div v-for="row in manualSubmissionRows(item.manual_form_submission)" :key="`${item.id}-${row.key}`" class="break-words">
-                              <span class="text-foreground">{{ row.key }}</span>：<span class="break-all">{{ row.value }}</span>
+                            <div v-for="row in manualSubmissionRows(item.manual_form_submission, item.manual_form_schema_snapshot)" :key="`${item.id}-${row.key}`" class="break-words">
+                              <span class="text-foreground">{{ row.label }}</span>：<span class="break-all">{{ row.value }}</span>
                             </div>
                           </div>
                         </div>
