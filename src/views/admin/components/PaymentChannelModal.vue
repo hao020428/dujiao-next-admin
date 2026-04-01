@@ -652,6 +652,35 @@ watch(
   }
 )
 
+// --- Reset form for create mode ---
+function resetFormForCreate() {
+  error.value = ''
+  showAdvanced.value = false
+  applyingChannelData.value = true
+  form.name = ''
+  form.icon = ''
+  form.provider_type = 'epay'
+  form.channel_type = 'alipay'
+  form.interaction_mode = 'qr'
+  form.fee_rate = '0'
+  form.fixed_fee = '0'
+  form.config_json = ''
+  form.is_active = true
+  form.sort_order = 10
+  resetAllConfigs()
+  applyingChannelData.value = false
+}
+
+// --- Watch modelValue to reset form when dialog opens in create mode ---
+watch(
+  () => props.modelValue,
+  (open) => {
+    if (open && props.channelId === null) {
+      resetFormForCreate()
+    }
+  }
+)
+
 // --- Watch channelId to load data or reset ---
 
 watch(
@@ -661,19 +690,7 @@ watch(
     showAdvanced.value = false
     if (id === null) {
       // Create mode: reset form
-      applyingChannelData.value = true
-      form.name = ''
-      form.icon = ''
-      form.provider_type = 'epay'
-      form.channel_type = 'alipay'
-      form.interaction_mode = 'qr'
-      form.fee_rate = '0'
-      form.fixed_fee = '0'
-      form.config_json = ''
-      form.is_active = true
-      form.sort_order = 10
-      resetAllConfigs()
-      applyingChannelData.value = false
+      resetFormForCreate()
     } else {
       // Edit mode: fetch channel details
       try {
