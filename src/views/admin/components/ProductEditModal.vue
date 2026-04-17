@@ -142,6 +142,7 @@ const form = reactive({
   seo_meta: { keywords: { 'zh-CN': '', 'zh-TW': '', 'en-US': '' }, description: { 'zh-CN': '', 'zh-TW': '', 'en-US': '' } } as { keywords: LocalizedText; description: LocalizedText; [key: string]: LocalizedText },
   description: { 'zh-CN': '', 'zh-TW': '', 'en-US': '' } as LocalizedText,
   content: { 'zh-CN': '', 'zh-TW': '', 'en-US': '' } as LocalizedText,
+  instructions: { 'zh-CN': '', 'zh-TW': '', 'en-US': '' } as LocalizedText,
   price_amount: 0,
   cost_price_amount: 0,
   images: [] as string[],
@@ -474,6 +475,7 @@ const resetForm = () => {
     seo_meta: { keywords: { 'zh-CN': '', 'zh-TW': '', 'en-US': '' }, description: { 'zh-CN': '', 'zh-TW': '', 'en-US': '' } },
     description: { 'zh-CN': '', 'zh-TW': '', 'en-US': '' },
     content: { 'zh-CN': '', 'zh-TW': '', 'en-US': '' },
+    instructions: { 'zh-CN': '', 'zh-TW': '', 'en-US': '' },
     price_amount: 0,
     images: [],
     tags: [],
@@ -518,6 +520,7 @@ const populateForm = (product: AdminProduct) => {
     seo_meta: normalizeSeoMeta(product.seo_meta),
     description: product.description || { 'zh-CN': '', 'zh-TW': '', 'en-US': '' },
     content: product.content || { 'zh-CN': '', 'zh-TW': '', 'en-US': '' },
+    instructions: (product as AdminProduct & { instructions?: LocalizedText }).instructions || { 'zh-CN': '', 'zh-TW': '', 'en-US': '' },
     price_amount: Number(product.price_amount || 0),
     cost_price_amount: Number(product.cost_price_amount || 0),
     images: imagesList,
@@ -578,6 +581,7 @@ const handleSubmit = async () => {
       title: form.title,
       description: form.description,
       content: form.content,
+      instructions: form.instructions,
       price_amount: effectivePrice,
       cost_price_amount: effectiveCostPrice,
       images: form.images,
@@ -1003,6 +1007,12 @@ watch(
             <label class="block text-xs font-medium text-muted-foreground mb-1.5">{{ t('admin.products.form.content', { lang: getCurrentLangName() }) }}</label>
             <RichEditor :model-value="form.content[currentLang] || ''" @update:model-value="(v: string) => form.content[currentLang] = v" :placeholder="t('admin.products.form.contentPlaceholder')" />
             <p class="mt-1 text-xs text-muted-foreground">{{ t('admin.products.form.contentTip') }}</p>
+          </div>
+
+          <div class="col-span-1 md:col-span-2">
+            <label class="block text-xs font-medium text-muted-foreground mb-1.5">{{ t('admin.products.form.instructions', { lang: getCurrentLangName() }) }}</label>
+            <RichEditor :model-value="form.instructions[currentLang] || ''" @update:model-value="(v: string) => form.instructions[currentLang] = v" :placeholder="t('admin.products.form.instructionsPlaceholder')" />
+            <p class="mt-1 text-xs text-muted-foreground">{{ t('admin.products.form.instructionsTip') }}</p>
           </div>
 
           <div class="col-span-1 md:col-span-2">
