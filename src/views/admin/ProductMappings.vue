@@ -519,15 +519,15 @@ const toggleCategoryExpand = (catId: number) => {
   expandedCategoryIds.value = s
 }
 
-const selectAllInCategory = (catId: number) => {
+const selectAllInCategory = (catId: number, v?: boolean | 'indeterminate') => {
   const products = productsByCategory.value.get(catId) || []
   const s = new Set(selectedProductIds.value)
   const nonMapped = products.filter(p => !mappedUpstreamIds.value.has(p.id))
-  const allSelected = nonMapped.every(p => s.has(p.id))
-  if (allSelected) {
-    for (const p of nonMapped) s.delete(p.id)
-  } else {
+  const shouldSelectAll = v === undefined ? !nonMapped.every(p => s.has(p.id)) : v === true
+  if (shouldSelectAll) {
     for (const p of nonMapped) s.add(p.id)
+  } else {
+    for (const p of nonMapped) s.delete(p.id)
   }
   selectedProductIds.value = s
 }
@@ -954,11 +954,9 @@ onMounted(() => { fetchConnections(); fetchCategories(); fetchMappings() })
                     <span v-if="catItem.nonMappedCount < catItem.productCount" class="ml-1 text-xs text-amber-600">({{ catItem.productCount - catItem.nonMappedCount }} {{ t('productMappings.import.alreadyMapped') }})</span>
                   </div>
                   <div class="flex items-center gap-2 shrink-0" @click.stop>
-                    <input
-                      type="checkbox"
-                      :checked="isCategoryAllSelected(catItem.category.id)"
-                      class="h-4 w-4 rounded border-border accent-primary cursor-pointer"
-                      @change="selectAllInCategory(catItem.category.id)"
+                    <Checkbox
+                      :model-value="isCategoryAllSelected(catItem.category.id)"
+                      @update:model-value="(v) => selectAllInCategory(catItem.category.id, v)"
                     />
                     <Button
                       size="sm"

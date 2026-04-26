@@ -7,6 +7,7 @@ import { adminAPI } from '@/api/admin'
 import type { AdminCoupon, AdminMemberLevel, AdminProduct } from '@/api/types'
 import IdCell from '@/components/IdCell.vue'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { Dialog, DialogHeader, DialogScrollContent, DialogTitle } from '@/components/ui/dialog'
@@ -291,15 +292,16 @@ const handleSearchScopeProducts = async () => {
   await loadProductOptions(scopeFilterKeyword.value)
 }
 
-const toggleScopeProduct = (rawProductID: number | string) => {
+const toggleScopeProduct = (rawProductID: number | string, v?: boolean | 'indeterminate') => {
   const productID = Number(rawProductID)
   if (!Number.isFinite(productID) || productID <= 0) return
   const normalizedID = Math.floor(productID)
-  if (selectedScopeIDs.value.includes(normalizedID)) {
+  const shouldAdd = v === undefined ? !selectedScopeIDs.value.includes(normalizedID) : v === true
+  if (shouldAdd) {
+    selectedScopeIDs.value = Array.from(new Set([...selectedScopeIDs.value, normalizedID])).sort((a, b) => a - b)
+  } else {
     selectedScopeIDs.value = selectedScopeIDs.value.filter((id) => id !== normalizedID)
-    return
   }
-  selectedScopeIDs.value = Array.from(new Set([...selectedScopeIDs.value, normalizedID])).sort((a, b) => a - b)
 }
 
 const scopeProductChecked = (rawProductID: number | string) => {
@@ -792,11 +794,9 @@ watch(
                     :key="`scope-product-${product.id}`"
                     class="flex cursor-pointer items-center gap-2 border-b border-border/60 px-3 py-2 text-sm last:border-b-0 hover:bg-muted/30"
                   >
-                    <input
-                      type="checkbox"
-                      class="h-4 w-4 accent-primary"
-                      :checked="scopeProductChecked(product.id)"
-                      @change="toggleScopeProduct(product.id)"
+                    <Checkbox
+                      :model-value="scopeProductChecked(product.id)"
+                      @update:model-value="(v) => toggleScopeProduct(product.id, v)"
                     />
                     <span class="truncate">{{ buildProductLabel(product) }}</span>
                   </label>

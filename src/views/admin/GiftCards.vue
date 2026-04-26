@@ -180,11 +180,10 @@ const toggleSelectAllCards = () => {
     .filter((id) => Number.isFinite(id) && id > 0)
 }
 
-const onRowSelectChange = (rawID: number | string, event: Event) => {
+const onRowSelectChange = (rawID: number | string, v: boolean | 'indeterminate') => {
   const id = Number(rawID)
   if (!Number.isFinite(id) || id <= 0) return
-  const checked = (event.target as HTMLInputElement | null)?.checked ?? false
-  if (checked) {
+  if (v === true) {
     selectedCardIDs.value = Array.from(new Set([...selectedCardIDs.value, Math.floor(id)]))
     return
   }
@@ -557,11 +556,9 @@ onMounted(() => {
           </TableRow>
           <TableRow v-for="card in cards" :key="card.id" class="hover:bg-muted/30">
             <TableCell class="min-w-[56px] px-4 py-3">
-              <input
-                type="checkbox"
-                class="h-4 w-4 accent-primary"
-                :checked="selectedCardIDs.includes(Number(card.id))"
-                @change="onRowSelectChange(card.id, $event)"
+              <Checkbox
+                :model-value="selectedCardIDs.includes(Number(card.id))"
+                @update:model-value="(v) => onRowSelectChange(card.id, v)"
               />
             </TableCell>
             <TableCell class="min-w-[80px] px-4 py-3"><IdCell :value="card.id" /></TableCell>

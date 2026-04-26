@@ -140,6 +140,15 @@ const toggleSelectAll = () => {
     .filter((id) => id > 0)
 }
 
+const toggleAffiliateUserSelected = (id: number, v: boolean | 'indeterminate') => {
+  if (v === true) {
+    if (!selectedIds.value.includes(id)) selectedIds.value.push(id)
+  } else {
+    const i = selectedIds.value.indexOf(id)
+    if (i >= 0) selectedIds.value.splice(i, 1)
+  }
+}
+
 const toggleProfileStatus = async (row: Record<string, unknown>) => {
   const profileID = resolveProfileID(row)
   if (profileID <= 0) return
@@ -291,12 +300,10 @@ onMounted(() => {
           </TableRow>
           <TableRow v-for="item in rows" :key="item?.profile?.id || item?.id" class="hover:bg-muted/30">
             <TableCell class="px-6 py-4">
-              <input
-                type="checkbox"
-                :value="resolveProfileID(item)"
-                v-model="selectedIds"
-                class="h-4 w-4 accent-primary"
+              <Checkbox
+                :model-value="selectedIds.includes(resolveProfileID(item))"
                 :disabled="resolveProfileID(item) <= 0"
+                @update:model-value="(v) => toggleAffiliateUserSelected(resolveProfileID(item), v)"
               />
             </TableCell>
             <TableCell class="px-6 py-4">
