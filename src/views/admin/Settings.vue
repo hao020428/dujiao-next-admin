@@ -5,6 +5,7 @@ import { adminAPI } from '@/api/admin'
 import RichEditor from '@/components/RichEditor.vue'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -792,11 +793,14 @@ onMounted(() => {
           </div>
           <div class="space-y-2">
             <label class="text-xs font-medium text-muted-foreground">{{ t('admin.settings.brand.currency') }}</label>
-            <select v-model="form.currency" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-              <option v-for="item in currencyOptions" :key="item" :value="item">
-                {{ item }}
-              </option>
-            </select>
+            <Select v-model="form.currency">
+              <SelectTrigger class="h-10 w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="item in currencyOptions" :key="item" :value="item">{{ item }}</SelectItem>
+              </SelectContent>
+            </Select>
             <p class="text-xs text-muted-foreground">{{ t('admin.settings.brand.currencyTip') }}</p>
           </div>
           <div class="space-y-2">
@@ -918,10 +922,15 @@ onMounted(() => {
 
               <div class="space-y-2">
                 <label class="text-xs font-medium text-muted-foreground">{{ t('admin.settings.scripts.position') }}</label>
-                <select v-model="script.position" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-                  <option value="head">{{ t('admin.settings.scripts.positionHead') }}</option>
-                  <option value="body_end">{{ t('admin.settings.scripts.positionBodyEnd') }}</option>
-                </select>
+                <Select v-model="script.position">
+                  <SelectTrigger class="h-10 w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="head">{{ t('admin.settings.scripts.positionHead') }}</SelectItem>
+                    <SelectItem value="body_end">{{ t('admin.settings.scripts.positionBodyEnd') }}</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

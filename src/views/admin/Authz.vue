@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { notifyError, notifySuccess } from '@/utils/notify'
@@ -923,9 +924,14 @@ onMounted(async () => {
         <template v-else>
           <div class="grid grid-cols-1 md:grid-cols-[1fr_140px_auto] gap-2">
             <Input v-model="policyForm.object" :placeholder="text.objectPlaceholder" />
-            <select v-model="policyForm.action" class="h-10 rounded-md border border-input bg-background px-3 text-sm">
-              <option v-for="action in actionOptions" :key="action" :value="action">{{ action }}</option>
-            </select>
+            <Select v-model="policyForm.action">
+              <SelectTrigger class="h-10">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="action in actionOptions" :key="action" :value="action">{{ action }}</SelectItem>
+              </SelectContent>
+            </Select>
             <Button @click="handleGrantPolicy">{{ text.addPolicy }}</Button>
           </div>
 
@@ -1018,12 +1024,17 @@ onMounted(async () => {
       <div class="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-4">
         <div class="space-y-2">
           <label class="text-sm text-muted-foreground">{{ text.adminLabel }}</label>
-          <select v-model.number="selectedAdminId" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
-            <option :value="0">{{ text.selectAdmin }}</option>
-            <option v-for="admin in admins" :key="admin.id" :value="admin.id">
-              {{ admin.username }}{{ admin.is_super ? ' (super)' : '' }}
-            </option>
-          </select>
+          <Select :model-value="String(selectedAdminId)" @update:model-value="selectedAdminId = Number($event)">
+            <SelectTrigger class="h-10 w-full">
+              <SelectValue :placeholder="text.selectAdmin" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="0">{{ text.selectAdmin }}</SelectItem>
+              <SelectItem v-for="admin in admins" :key="admin.id" :value="String(admin.id)">
+                {{ admin.username }}{{ admin.is_super ? ' (super)' : '' }}
+              </SelectItem>
+            </SelectContent>
+          </Select>
           <div v-if="loadingAdmins" class="text-xs text-muted-foreground">{{ text.loading }}</div>
           <div v-else-if="selectedAdmin" class="rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground space-y-1">
             <div class="flex items-center justify-between">
