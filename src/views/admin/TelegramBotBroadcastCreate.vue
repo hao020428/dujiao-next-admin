@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Textarea } from '@/components/ui/textarea'
 import { notifyError, notifySuccess } from '@/utils/notify'
-import { formatDate } from '@/utils/format'
+import { formatDate, toRFC3339 } from '@/utils/format'
 import { Loader2, Search, Send, Trash2, Users, ImageIcon } from 'lucide-vue-next'
 import MediaPicker from '@/components/admin/MediaPicker.vue'
 import FileInput from '@/components/FileInput.vue'
@@ -65,8 +65,8 @@ const fetchUsers = async (page = 1) => {
       display_name: filters.display_name || undefined,
       telegram_username: filters.telegram_username || undefined,
       telegram_user_id: filters.telegram_user_id || undefined,
-      created_from: filters.created_from || undefined,
-      created_to: filters.created_to || undefined,
+      created_from: toRFC3339(filters.created_from),
+      created_to: toRFC3339(filters.created_to),
     })
     users.value = res.data?.data || []
     pagination.value = res.data?.pagination || pagination.value
@@ -174,8 +174,8 @@ const handleSubmit = async () => {
             display_name: filters.display_name,
             telegram_username: filters.telegram_username,
             telegram_user_id: filters.telegram_user_id,
-            created_from: filters.created_from,
-            created_to: filters.created_to,
+            created_from: toRFC3339(filters.created_from),
+            created_to: toRFC3339(filters.created_to),
           }
         : {},
       attachment_url: form.attachment_url || undefined,
@@ -314,8 +314,8 @@ onMounted(() => {
           <Input v-model="filters.display_name" :placeholder="t('telegramBot.broadcasts.filterDisplayName')" />
           <Input v-model="filters.telegram_username" :placeholder="t('telegramBot.broadcasts.filterTelegramUsername')" />
           <Input v-model="filters.telegram_user_id" :placeholder="t('telegramBot.broadcasts.filterTelegramUserId')" />
-          <Input v-model="filters.created_from" type="date" />
-          <Input v-model="filters.created_to" type="date" />
+          <Input v-model="filters.created_from" type="datetime-local" />
+          <Input v-model="filters.created_to" type="datetime-local" />
         </div>
 
         <div class="flex flex-wrap gap-2">

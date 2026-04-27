@@ -6,7 +6,7 @@ import { adminAPI } from '@/api/admin'
 import type { AdminUser, AdminMemberLevel } from '@/api/types'
 import IdCell from '@/components/IdCell.vue'
 import { userStatusClass, userStatusLabel } from '@/utils/status'
-import { formatDate, formatMoney, getLocalizedText } from '@/utils/format'
+import { formatDate, formatMoney, getLocalizedText, toRFC3339 } from '@/utils/format'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -68,10 +68,10 @@ const fetchUsers = async (page = 1) => {
       page_size: pagination.value.page_size,
       keyword: filters.keyword || undefined,
       status: normalizeFilterValue(filters.status) || undefined,
-      created_from: filters.createdFrom || undefined,
-      created_to: filters.createdTo || undefined,
-      last_login_from: filters.lastLoginFrom || undefined,
-      last_login_to: filters.lastLoginTo || undefined,
+      created_from: toRFC3339(filters.createdFrom),
+      created_to: toRFC3339(filters.createdTo),
+      last_login_from: toRFC3339(filters.lastLoginFrom),
+      last_login_to: toRFC3339(filters.lastLoginTo),
     })
     users.value = response.data.data || []
     pagination.value = response.data.pagination || pagination.value
@@ -273,7 +273,7 @@ onMounted(() => {
           <span class="text-xs text-muted-foreground whitespace-nowrap">{{ t('admin.users.filterCreatedRange') }}</span>
           <Input
             v-model="filters.createdFrom"
-            type="date"
+            type="datetime-local"
             class="h-9 w-full md:w-auto"
             :placeholder="t('admin.users.filterCreatedFrom')"
             @update:modelValue="handleSearch"
@@ -281,7 +281,7 @@ onMounted(() => {
           <span class="hidden text-muted-foreground md:inline">-</span>
           <Input
             v-model="filters.createdTo"
-            type="date"
+            type="datetime-local"
             class="h-9 w-full md:w-auto"
             :placeholder="t('admin.users.filterCreatedTo')"
             @update:modelValue="handleSearch"
@@ -291,7 +291,7 @@ onMounted(() => {
           <span class="text-xs text-muted-foreground whitespace-nowrap">{{ t('admin.users.filterLastLoginRange') }}</span>
           <Input
             v-model="filters.lastLoginFrom"
-            type="date"
+            type="datetime-local"
             class="h-9 w-full md:w-auto"
             :placeholder="t('admin.users.filterLastLoginFrom')"
             @update:modelValue="handleSearch"
@@ -299,7 +299,7 @@ onMounted(() => {
           <span class="hidden text-muted-foreground md:inline">-</span>
           <Input
             v-model="filters.lastLoginTo"
-            type="date"
+            type="datetime-local"
             class="h-9 w-full md:w-auto"
             :placeholder="t('admin.users.filterLastLoginTo')"
             @update:modelValue="handleSearch"

@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n'
 import { useDebounceFn } from '@vueuse/core'
 import { adminAPI } from '@/api/admin'
 import type { AdminProcurementOrder, AdminSiteConnection } from '@/api/types'
-import { getLocalizedText, formatMoney, hasPositiveAmount } from '@/utils/format'
+import { getLocalizedText, formatMoney, hasPositiveAmount, toRFC3339 } from '@/utils/format'
 import { orderStatusLabel } from '@/utils/status'
 import TableSkeleton from '@/components/TableSkeleton.vue'
 import { Button } from '@/components/ui/button'
@@ -117,8 +117,10 @@ const buildStatsParams = () => {
   if (filters.connection_id && filters.connection_id !== '__all__') params.connection_id = filters.connection_id
   if (filters.order_no) params.order_no = filters.order_no
   if (filters.upstream_order_no) params.upstream_order_no = filters.upstream_order_no
-  if (filters.created_from) params.created_from = filters.created_from
-  if (filters.created_to) params.created_to = filters.created_to
+  const createdFrom = toRFC3339(filters.created_from)
+  if (createdFrom) params.created_from = createdFrom
+  const createdTo = toRFC3339(filters.created_to)
+  if (createdTo) params.created_to = createdTo
   return params
 }
 
@@ -161,8 +163,10 @@ const fetchOrders = async (page = 1) => {
     if (filters.connection_id && filters.connection_id !== '__all__') params.connection_id = filters.connection_id
     if (filters.order_no) params.order_no = filters.order_no
     if (filters.upstream_order_no) params.upstream_order_no = filters.upstream_order_no
-    if (filters.created_from) params.created_from = filters.created_from
-    if (filters.created_to) params.created_to = filters.created_to
+    const createdFrom = toRFC3339(filters.created_from)
+    if (createdFrom) params.created_from = createdFrom
+    const createdTo = toRFC3339(filters.created_to)
+    if (createdTo) params.created_to = createdTo
 
     const res = await adminAPI.getProcurementOrders(params)
     orders.value = (res.data.data as ProcurementOrderWithRelations[]) || []
@@ -522,9 +526,9 @@ onMounted(() => {
       <div class="w-full sm:w-auto">
         <label class="mb-1.5 block text-xs font-medium text-muted-foreground">{{ t('procurement.filters.dateRange') }}</label>
         <div class="flex flex-col gap-1.5 sm:flex-row sm:items-center">
-          <Input v-model="filters.created_from" type="date" class="h-9 w-full sm:w-36" @change="handleSearch" />
+          <Input v-model="filters.created_from" type="datetime-local" class="h-9 w-full sm:w-44" @change="handleSearch" />
           <span class="hidden text-xs text-muted-foreground sm:inline">—</span>
-          <Input v-model="filters.created_to" type="date" class="h-9 w-full sm:w-36" @change="handleSearch" />
+          <Input v-model="filters.created_to" type="datetime-local" class="h-9 w-full sm:w-44" @change="handleSearch" />
         </div>
       </div>
       <Button size="sm" class="h-9 w-full sm:w-auto" @click="handleSearch">{{ t('procurement.filters.search') }}</Button>
