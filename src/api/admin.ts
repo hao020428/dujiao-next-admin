@@ -341,6 +341,9 @@ export const adminAPI = {
   updateAffiliateSettings: (data: AdminAffiliateSetting) => api.put('/admin/settings/affiliate', data),
   getPublicConfig: () => api.get('/public/config'),
   getImageCaptcha: () => api.get('/public/captcha/image'),
+  getSystemVersion: () => api.get('/admin/system/version'),
+  checkSystemUpdate: (params?: { owner?: string; repo?: string }) =>
+    api.get('/admin/system/version/check', { params }),
   getDashboardOverview: (params?: Record<string, unknown>) => api.get('/admin/dashboard/overview', { params }),
   getDashboardTrends: (params?: Record<string, unknown>) => api.get('/admin/dashboard/trends', { params }),
   getDashboardRankings: (params?: Record<string, unknown>) => api.get('/admin/dashboard/rankings', { params }),
